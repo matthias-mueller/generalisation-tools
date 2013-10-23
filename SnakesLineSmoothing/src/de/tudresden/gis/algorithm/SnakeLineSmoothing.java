@@ -11,13 +11,14 @@ import java.io.FileOutputStream;
 //import java.io.FileWriter;
 import java.io.IOException;
 
-import ch.unizh.geo.algorithms.snakes.SnakesSmoothingLine;
+import ch.unizh.geo.algorithms.snakes.SnakesSmoothingLineNew;
 
 import com.vividsolutions.jts.geom.Geometry;
 //import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 //import com.vividsolutions.jts.io.ParseException;
 //import com.vividsolutions.jts.io.WKTReader;
+
 
 import de.tudresden.gis.json.IGeometryHandler;
 import de.tudresden.gis.json.JsonProcessor;
@@ -39,7 +40,11 @@ public class SnakeLineSmoothing implements IGeometryHandler{
 	}
 
 	public static LineString SmoothLine(LineString line, double maxVertexDisplacement){
-		SnakesSmoothingLine ssl = new SnakesSmoothingLine(line, maxVertexDisplacement, 1.0, 1.0);
+		SnakesSmoothingLineNew ssl = new SnakesSmoothingLineNew(line, maxVertexDisplacement, 1.0, 1.0);
+		// return original line if smoothing could not be done
+		if(ssl.isCouldNotSmooth()){
+			return line;
+		}
 		return ssl.getSmoothedLine();
 	}
 
@@ -52,8 +57,8 @@ public class SnakeLineSmoothing implements IGeometryHandler{
 		String inFileName = args[0];
 		String outFileName = args[1];
 		double tolerance = Double.parseDouble(args[2]);
-//		String inFileName = "data/in.json";
-//		String outFileName = "data/out.json";
+//		String inFileName = "data/route.json";
+//		String outFileName = "data/route_out.json";
 //		double tolerance = 0.05;
 
 		File inFile = new File(inFileName);
